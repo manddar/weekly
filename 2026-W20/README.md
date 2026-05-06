@@ -87,4 +87,4 @@ The engineers winning with AI today aren't the ones with the best prompts. They'
 
 ---
 
-*Published every Friday. [View web version](index.html) · [Back to Archive](../index.html)*
+*Published every Friday. [View web version](index.html) · [Archive](../index.html) · [weekly.mandar.me](https://weekly.mandar.me/) · [GitHub](https://github.com/manddar/weekly)*

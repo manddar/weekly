@@ -9,7 +9,7 @@ This file is the authoritative guide for any AI assistant working on this projec
 A weekly newsletter published every Friday. Each issue covers AI, technology, and tooling topics relevant to practitioners. The newsletter is:
 
 - Hosted as a **public GitHub repo** (source of truth)
-- Deployed as a **static website on Vercel** (root `index.html` is the landing/archive page)
+- Deployed as a **static website** at **https://weekly.mandar.me/** (root `index.html` is the landing/archive page)
 - Each issue is a self-contained, single-file `index.html` — no build step, no frameworks, no dependencies beyond Google Fonts and inline CSS
 
 The audience is technical — engineers, architects, AI practitioners. Design quality and information density both matter.
@@ -98,7 +98,7 @@ Mirror the root archive in markdown.
 - A visible issue number or date in the header
 - Navigation / table of contents for multi-topic issues
 - Each topic as a distinct section with its own heading, body content, and visual treatment
-- Footer with: issue date, "Back to Archive" link (`../index.html`), repo/site link
+- Footer with: issue date, "Back to Archive" link (`../index.html`), link to public site (`https://weekly.mandar.me/`), link to GitHub (`https://github.com/manddar/weekly`)
 
 ### Content quality bar
 - Each topic section: minimum 150 words of editorial content
@@ -185,7 +185,7 @@ Format:
 
 ---
 
-*Published every Friday. [View web version](index.html) · [Archive](../index.html)*
+*Published every Friday. [View web version](index.html) · [Archive](../index.html) · [weekly.mandar.me](https://weekly.mandar.me/) · [GitHub](https://github.com/manddar/weekly)*
 ```
 
 ---
