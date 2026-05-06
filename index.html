@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Weekly — AI & Technology Newsletter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #faf8f3;
+        --bg-2: #f2ede4;
+        --ink: #1a1714;
+        --ink-2: #5a5550;
+        --ink-3: #9a948d;
+        --accent: #c0392b;
+        --accent-2: #e74c3c;
+        --rule: rgba(26, 23, 20, 0.12);
+        --f-serif: "Playfair Display", Georgia, serif;
+        --f-sans: "Inter", system-ui, sans-serif;
+        --f-mono: "IBM Plex Mono", monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--f-sans);
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── MASTHEAD ─────────────────────────────────────── */
+      .masthead {
+        border-bottom: 3px solid var(--ink);
+        padding: 48px 0 32px;
+        text-align: center;
+      }
+
+      .masthead-eyebrow {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        margin-bottom: 16px;
+      }
+
+      .masthead-title {
+        font-family: var(--f-serif);
+        font-size: clamp(52px, 8vw, 100px);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        margin-bottom: 20px;
+      }
+
+      .masthead-title span {
+        color: var(--accent);
+      }
+
+      .masthead-tagline {
+        font-size: 15px;
+        color: var(--ink-2);
+        max-width: 480px;
+        margin: 0 auto 24px;
+        font-weight: 300;
+        line-height: 1.7;
+      }
+
+      .masthead-rule {
+        width: 60px;
+        height: 2px;
+        background: var(--accent);
+        margin: 0 auto;
+      }
+
+      /* ── LAYOUT ───────────────────────────────────────── */
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ── SECTION HEADER ───────────────────────────────── */
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 40px 0 20px;
+        border-bottom: 1px solid var(--rule);
+        margin-bottom: 0;
+      }
+
+      .section-header h2 {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+
+      .section-header::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--rule);
+      }
+
+      /* ── ISSUE LIST ───────────────────────────────────── */
+      .issue-list {
+        list-style: none;
+      }
+
+      .issue-item {
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .issue-link {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        gap: 24px;
+        align-items: start;
+        padding: 28px 0;
+        text-decoration: none;
+        color: inherit;
+        transition: opacity 0.15s;
+      }
+
+      .issue-link:hover {
+        opacity: 0.7;
+      }
+      .issue-link:hover .issue-title {
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+      }
+
+      .issue-number {
+        font-family: var(--f-serif);
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--ink-3);
+        line-height: 1;
+        padding-top: 4px;
+      }
+
+      .issue-body {
+      }
+
+      .issue-date {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+
+      .issue-title {
+        font-family: var(--f-serif);
+        font-size: clamp(18px, 2.5vw, 22px);
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+
+      .issue-desc {
+        font-size: 14px;
+        color: var(--ink-2);
+        line-height: 1.6;
+        font-weight: 300;
+      }
+
+      .issue-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .issue-tag {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        padding: 2px 8px;
+        border: 1px solid var(--rule);
+        color: var(--ink-2);
+        text-transform: uppercase;
+        border-radius: 2px;
+      }
+
+      .issue-read {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+        padding-top: 4px;
+        align-self: center;
+      }
+
+      /* ── EMPTY STATE ──────────────────────────────────── */
+      .empty-soon {
+        padding: 40px 0 20px;
+        color: var(--ink-3);
+        font-size: 14px;
+        font-style: italic;
+      }
+
+      /* ── ABOUT ────────────────────────────────────────── */
+      .about {
+        background: var(--bg-2);
+        border-top: 1px solid var(--rule);
+        padding: 48px 0;
+        margin-top: 48px;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+      }
+
+      .about h3 {
+        font-family: var(--f-serif);
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      .about p {
+        font-size: 14px;
+        color: var(--ink-2);
+        line-height: 1.75;
+        font-weight: 300;
+      }
+
+      .about a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+      }
+
+      /* ── FOOTER ───────────────────────────────────────── */
+      footer {
+        border-top: 3px solid var(--ink);
+        padding: 28px 0;
+        text-align: center;
+      }
+
+      footer p {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+
+      footer a {
+        color: var(--ink-2);
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+      }
+
+      /* ── RESPONSIVE ───────────────────────────────────── */
+      @media (max-width: 600px) {
+        .issue-link {
+          grid-template-columns: 40px 1fr;
+          gap: 16px;
+        }
+        .issue-read {
+          display: none;
+        }
+        .issue-number {
+          font-size: 26px;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- MASTHEAD -->
+    <header class="masthead">
+      <div class="container">
+        <p class="masthead-eyebrow">Published every week</p>
+        <h1 class="masthead-title">The<span>.</span><br />Weekly</h1>
+        <p class="masthead-tagline">
+          A practitioner's digest of AI, tooling, and technology — curated and
+          written for builders.
+        </p>
+        <div class="masthead-rule"></div>
+      </div>
+    </header>
+
+    <!-- ARCHIVE -->
+    <main>
+      <div class="container">
+        <div class="section-header">
+          <h2>All Issues</h2>
+        </div>
+
+        <ul class="issue-list">
+          <!-- ISSUE #1 -->
+          <li class="issue-item">
+            <a class="issue-link" href="./2026-W20/index.html">
+              <span class="issue-number">01</span>
+              <div class="issue-body">
+                <p class="issue-date">Week 20 · May 2026</p>
+                <h2 class="issue-title">
+                  Agentic AI Harness — What It Is &amp; Why It Matters
+                </h2>
+                <p class="issue-desc">
+                  A deep-dive into agentic AI frameworks: what the harness
+                  pattern is, how ReAct loops work, and what it means for
+                  practitioners building on top of LLMs.
+                </p>
+                <div class="issue-topics">
+                  <span class="issue-tag">Agentic AI</span>
+                  <span class="issue-tag">ReAct</span>
+                  <span class="issue-tag">LLM Tooling</span>
+                </div>
+              </div>
+              <span class="issue-read">Read →</span>
+            </a>
+          </li>
+
+          <!-- NEW ISSUES ADDED ABOVE THIS LINE -->
+        </ul>
+      </div>
+    </main>
+
+    <!-- ABOUT -->
+    <section class="about">
+      <div class="container">
+        <div class="about-grid">
+          <div>
+            <h3>About The Weekly</h3>
+            <p>
+              A no-fluff newsletter for engineers and architects navigating the
+              AI landscape. Every Friday, one deep-dive and a curated set of
+              topics worth your time. Written by a practitioner, for
+              practitioners.
+            </p>
+          </div>
+          <div>
+            <h3>How It Works</h3>
+            <p>
+              Each issue is a self-contained HTML file — no tracker pixels, no
+              paywalls, no cookies.
+              <a href="https://github.com">View source on GitHub</a>. The
+              archive is hosted on Vercel. Built with care, not algorithms.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <p>
+          The Weekly · Published every Friday ·
+          <a href="https://github.com">GitHub</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
