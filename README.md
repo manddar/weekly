@@ -4,7 +4,7 @@ A practitioner's digest of AI, tooling, and technology — published every Frida
 
 No fluff. No paywalls. Each issue is a self-contained HTML page.
 
-**[View Archive →](https://weekly.vercel.app)** *(website)*
+**[View Archive →](https://weekly.mandar.me/)** *(website)* · **[GitHub →](https://github.com/manddar/weekly)**
 
 ---
 
