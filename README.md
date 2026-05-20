@@ -12,6 +12,7 @@ No fluff. No paywalls. Each issue is a self-contained HTML page.
 
 | # | Date | Title | Topics |
 |---|------|-------|--------|
+| 02 | Week 21 · May 2026 | [Hermes Agent — Autonomous Workflows for the Enterprise](./2026-W21/README.md) | AI Agents, Orchestration, Enterprise AI, Human-in-the-Loop |
 | 01 | Week 20 · May 2026 | [Agentic AI Harness — What It Is & Why It Matters](./2026-W20/README.md) | Agentic AI, ReAct, LLM Tooling |
 
 ---

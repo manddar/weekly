@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Agent — Autonomous Workflows for the Enterprise | The Weekly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:           #0b0718;
+      --bg-2:         #150f2a;
+      --bg-card:      rgba(22, 16, 44, 0.72);
+      --bg-card-hi:   rgba(28, 20, 56, 0.85);
+      --border:       rgba(167, 139, 250, 0.14);
+      --border-med:   rgba(167, 139, 250, 0.28);
+      --border-hi:    rgba(167, 139, 250, 0.45);
+      --text:         #ece9f7;
+      --text-2:       #a8a4cc;
+      --text-3:       #6b6890;
+      --text-4:       #43406a;
+      --purple:       #b79cff;
+      --purple-2:     #8c6cff;
+      --purple-dim:   rgba(167, 139, 250, 0.10);
+      --pink:         #f48cc6;
+      --pink-2:       #ff6fb1;
+      --pink-dim:     rgba(244, 114, 182, 0.09);
+      --gold:         #f5d57a;
+      --f-body:       'DM Sans', system-ui, sans-serif;
+      --f-display:    'Fraunces', 'DM Sans', serif;
+      --f-mono:       'Fira Code', 'IBM Plex Mono', monospace;
+      --radius-sm:    8px;
+      --radius:       14px;
+      --radius-lg:    20px;
+      --ease:         cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--f-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { background: rgba(183, 156, 255, 0.32); color: #fff; }
+
+    /* ── Reading progress bar ───────────────── */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple), var(--pink), var(--gold));
+      z-index: 10000;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 12px rgba(183, 156, 255, 0.5);
+    }
+
+    /* Noise grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px;
+      mix-blend-mode: overlay;
+    }
+
+    /* Background gradient orbs — animated */
+    body::before {
+      content: '';
+      position: fixed; inset: -20%;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 700px 480px at 12% 6%, rgba(167,139,250,0.13) 0%, transparent 65%),
+        radial-gradient(ellipse 560px 400px at 88% 82%, rgba(244,114,182,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 420px 320px at 55% 48%, rgba(140,108,255,0.05) 0%, transparent 70%);
+      animation: drift 28s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-3%, 2%) scale(1.04); }
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Sticky side TOC (desktop only) ──────── */
+    .side-toc {
+      position: fixed;
+      top: 50%;
+      left: max(16px, calc(50% - 560px));
+      transform: translateY(-50%);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 10px;
+    }
+
+    @media (min-width: 1180px) {
+      .side-toc { display: flex; }
+    }
+
+    .side-toc a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-3);
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 6px 4px;
+      transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+
+    .side-toc a .dot {
+      width: 22px;
+      height: 1px;
+      background: var(--text-4);
+      transition: all 0.25s var(--ease);
+      flex-shrink: 0;
+    }
+
+    .side-toc a .label {
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+      white-space: nowrap;
+    }
+
+    .side-toc:hover a .label { opacity: 1; transform: translateX(0); }
+
+    .side-toc a:hover { color: var(--text); }
+    .side-toc a:hover .dot { background: var(--purple); width: 28px; }
+
+    .side-toc a.active { color: var(--purple); }
+    .side-toc a.active .dot {
+      background: var(--purple);
+      width: 34px;
+      box-shadow: 0 0 8px rgba(183, 156, 255, 0.5);
+    }
+    .side-toc a.active .label { opacity: 1; transform: translateX(0); }
+
+    /* ── HEADER ─────────────────────────────── */
+    header {
+      padding: 96px 0 64px;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-med) 20%, var(--border-med) 80%, transparent);
+    }
+
+    .header-meta {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-meta::before {
+      content: '';
+      display: inline-block;
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple));
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-family: var(--f-display);
+      font-optical-sizing: auto;
+      font-variation-settings: 'opsz' 144;
+      font-size: clamp(48px, 9vw, 92px);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .header-title .accent-purple {
+      color: var(--purple);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .header-title .accent-pink { color: var(--pink); }
+
+    .header-subtitle {
+      font-size: 19px;
+      color: var(--text-2);
+      max-width: 640px;
+      font-weight: 300;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      letter-spacing: -0.005em;
+    }
+
+    .header-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 13px;
+      border: 1px solid var(--border-med);
+      color: var(--text-2);
+      border-radius: 100px;
+      background: var(--purple-dim);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s var(--ease);
+      cursor: default;
+    }
+
+    .tag:hover {
+      color: var(--text);
+      border-color: var(--border-hi);
+      transform: translateY(-1px);
+      background: rgba(167, 139, 250, 0.16);
+    }
+
+    /* ── TOC (inline, mobile + tablet) ───────── */
+    .toc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 34px;
+      margin: 56px 0;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toc::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple) 30%, var(--pink) 70%, transparent);
+      opacity: 0.5;
+    }
+
+    .toc-label {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 18px;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toc-list li a {
+      font-size: 14.5px;
+      color: var(--text-2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0;
+      transition: color 0.2s var(--ease), padding-left 0.25s var(--ease);
+      border-bottom: 1px solid transparent;
+    }
+
+    .toc-list li a:hover {
+      color: var(--text);
+      padding-left: 6px;
+    }
+
+    .toc-list li a:hover .toc-num {
+      color: var(--pink);
+      opacity: 1;
+    }
+
+    .toc-num {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      color: var(--purple);
+      width: 22px;
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: all 0.2s var(--ease);
+    }
+
+    /* ── SECTIONS ───────────────────────────── */
+    .section {
+      margin: 88px 0;
+      padding-top: 12px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-id {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--purple);
+      opacity: 0.8;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-id::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 10px var(--purple);
+    }
+
+    .section h2 {
+      font-family: var(--f-display);
+      font-variation-settings: 'opsz' 100;
+      font-size: clamp(28px, 4.5vw, 40px);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    .section h2 .hl-pink {
+      color: var(--pink);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .section h2 .hl-purple {
+      color: var(--purple);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .section p {
+      font-size: 16.5px;
+      color: var(--text-2);
+      line-height: 1.78;
+      margin-bottom: 22px;
+      letter-spacing: -0.003em;
+    }
+
+    .section p:last-child { margin-bottom: 0; }
+
+    .section p strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .section p em {
+      color: var(--text);
+      font-style: italic;
+      font-family: var(--f-display);
+      font-weight: 400;
+    }
+
+    /* Drop cap on first section's first paragraph */
+    #what-is-hermes > p:first-of-type::first-letter {
+      font-family: var(--f-display);
+      font-weight: 500;
+      font-size: 4.5em;
+      float: left;
+      line-height: 0.88;
+      margin: 6px 14px 0 0;
+      color: var(--purple);
+      font-style: italic;
+    }
+
+    /* ── GRADIENT CARD ──────────────────────── */
+    .gradient-card {
+      background:
+        linear-gradient(135deg, rgba(167,139,250,0.10) 0%, rgba(244,114,182,0.07) 100%),
+        var(--bg-card);
+      border: 1px solid var(--border-med);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin: 32px 0;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .gradient-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--purple), var(--pink), transparent 85%);
+    }
+
+    .gradient-card::after {
+      content: '';
+      position: absolute;
+      top: -40%; right: -10%;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(244,114,182,0.10), transparent 65%);
+      pointer-events: none;
+    }
+
+    .gradient-card p {
+      margin-bottom: 0;
+      font-size: 15.5px;
+      color: var(--text-2);
+      line-height: 1.72;
+      position: relative;
+      z-index: 1;
+    }
+
+    .gradient-card p strong { color: var(--text); }
+
+    /* ── CALLOUT ────────────────────────────── */
+    .callout {
+      border-left: 2px solid var(--purple);
+      padding: 22px 28px 22px 36px;
+      margin: 32px 0;
+      background: var(--purple-dim);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      position: relative;
+    }
+
+    .callout::before {
+      content: '“';
+      position: absolute;
+      top: -8px; left: 14px;
+      font-family: var(--f-display);
+      font-size: 56px;
+      color: var(--purple);
+      opacity: 0.35;
+      line-height: 1;
+    }
+
+    .callout.pink {
+      border-left-color: var(--pink);
+      background: var(--pink-dim);
+    }
+
+    .callout.pink::before { color: var(--pink); }
+
+    .callout p {
+      margin-bottom: 0;
+      font-size: 16px;
+      color: var(--text-2);
+      font-style: italic;
+      font-family: var(--f-display);
+      font-weight: 400;
+      line-height: 1.65;
+      letter-spacing: -0.003em;
+    }
+
+    .callout p strong {
+      color: var(--text);
+      font-style: normal;
+      font-family: var(--f-body);
+      font-weight: 600;
+    }
+
+    /* ── PILLARS GRID ───────────────────────── */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .pillar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 22px 24px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), background 0.3s var(--ease);
+    }
+
+    .pillar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(167,139,250,0.06), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+      pointer-events: none;
+    }
+
+    .pillar:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-hi);
+      background: var(--bg-card-hi);
+    }
+
+    .pillar:hover::before { opacity: 1; }
+
+    .pillar-icon {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      color: var(--purple);
+      letter-spacing: 0.14em;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pillar-icon::after {
+      content: '';
+      width: 18px; height: 1px;
+      background: currentColor;
+      opacity: 0.5;
+    }
+
+    .pillar h4 {
+      font-family: var(--f-display);
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .pillar p {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.65;
+      margin-bottom: 0;
+    }
+
+    /* ── DIVIDER ────────────────────────────── */
+    .divider {
+      border: none;
+      height: 1px;
+      margin: 72px 0 0;
+      background: linear-gradient(90deg, transparent, var(--border-med) 30%, var(--border-med) 70%, transparent);
+      position: relative;
+    }
+
+    .divider::after {
+      content: '◆';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg);
+      padding: 0 14px;
+      color: var(--text-4);
+      font-size: 8px;
+      letter-spacing: 0.3em;
+    }
+
+    /* ── FOOTER ─────────────────────────────── */
+    footer {
+      padding: 64px 0 72px;
+      margin-top: 72px;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-med) 30%, var(--border-med) 70%, transparent);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer-mark {
+      font-family: var(--f-display);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--text-2);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-mark span { color: var(--purple); }
+
+    .footer-inner > p {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      color: var(--text-3);
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .footer-links a {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(157, 155, 192, 0.2);
+      padding-bottom: 2px;
+      transition: color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
+    }
+
+    .footer-links a:hover {
+      color: var(--purple);
+      border-color: var(--purple);
+      transform: translateY(-1px);
+    }
+
+    .footer-sep {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--text-4);
+    }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 720px) {
+      header { padding: 56px 0 40px; }
+      .container { padding: 0 22px; }
+      .section { margin: 60px 0; }
+      .toc { padding: 22px; margin: 40px 0; }
+      .gradient-card { padding: 22px 22px; }
+      .callout { padding: 18px 20px 18px 30px; }
+      .pillars { grid-template-columns: 1fr; }
+      .header-subtitle { font-size: 17px; }
+      #what-is-hermes > p:first-of-type::first-letter {
+        font-size: 3.6em;
+        margin: 4px 10px 0 0;
+      }
+      .divider { margin-top: 56px; }
+      footer { padding: 48px 0 56px; }
+      .footer-links { gap: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .section { opacity: 1; transform: none; transition: none; }
+      body::before { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<aside class="side-toc" aria-label="Section navigation">
+  <a href="#what-is-hermes" data-target="what-is-hermes"><span class="dot"></span><span class="label">01 · Overview</span></a>
+  <a href="#autonomous-ops" data-target="autonomous-ops"><span class="dot"></span><span class="label">02 · Autonomous Agents</span></a>
+  <a href="#orchestration" data-target="orchestration"><span class="dot"></span><span class="label">03 · Architecture</span></a>
+  <a href="#hitl" data-target="hitl"><span class="dot"></span><span class="label">04 · Control</span></a>
+  <a href="#multi-agent" data-target="multi-agent"><span class="dot"></span><span class="label">05 · Coordination</span></a>
+  <a href="#enterprise" data-target="enterprise"><span class="dot"></span><span class="label">06 · Production</span></a>
+  <a href="#so-what" data-target="so-what"><span class="dot"></span><span class="label">07 · Practitioner's Take</span></a>
+</aside>
+
+<header>
+  <div class="container">
+    <p class="header-meta">The Weekly &nbsp;·&nbsp; Issue #2 &nbsp;·&nbsp; Week 21, May 2026</p>
+    <h1 class="header-title">Hermes <span class="accent-purple">Agent</span></h1>
+    <p class="header-subtitle">How autonomous AI agents are reshaping business operations — and what practitioners need to know about building for real-world workflow automation at enterprise scale.</p>
+    <div class="header-tags">
+      <span class="tag">AI Agents</span>
+      <span class="tag">Workflow Automation</span>
+      <span class="tag">Orchestration</span>
+      <span class="tag">Enterprise AI</span>
+      <span class="tag">Human-in-the-Loop</span>
+      <span class="tag">Multi-Agent</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="toc">
+      <p class="toc-label">In this issue</p>
+      <ul class="toc-list">
+        <li><a href="#what-is-hermes"><span class="toc-num">01</span> What is Hermes Agent?</a></li>
+        <li><a href="#autonomous-ops"><span class="toc-num">02</span> Autonomous Agents for Business Operations</a></li>
+        <li><a href="#orchestration"><span class="toc-num">03</span> Workflow Orchestration Architecture</a></li>
+        <li><a href="#hitl"><span class="toc-num">04</span> Human-in-the-Loop Controls</a></li>
+        <li><a href="#multi-agent"><span class="toc-num">05</span> Multi-Agent Collaboration</a></li>
+        <li><a href="#enterprise"><span class="toc-num">06</span> Enterprise-Grade: Security, Observability &amp; Scale</a></li>
+        <li><a href="#so-what"><span class="toc-num">07</span> The Practitioner's Take</a></li>
+      </ul>
+    </nav>
+
+    <!-- SECTION 1 -->
+    <section class="section" id="what-is-hermes">
+      <p class="section-id">01 / Overview</p>
+      <h2>What is <span class="hl-purple">Hermes Agent</span>?</h2>
+      <p>
+        Hermes is an AI agent platform designed to automate complex business workflows through action-driven, intelligent agents. The name is apt: in Greek mythology, Hermes is the messenger god — swift, precise, a connector between worlds. The platform embodies that archetype. It bridges your existing systems, tools, and decision points with an intelligent layer that can reason, act, and report back.
+      </p>
+      <p>
+        At its core, Hermes combines three capabilities that most enterprise automation platforms have historically kept separate: <strong>reasoning</strong> (understanding what needs to happen and in what order), <strong>orchestration</strong> (coordinating across tools, APIs, and data sources), and <strong>real-time execution</strong> (actually doing things, not just planning them). That combination is what differentiates it from conventional RPA tools or simple script-based automation pipelines.
+      </p>
+      <p>
+        Traditional automation platforms — think UiPath, Zapier, or even custom-built DAG pipelines — operate on fixed, predefined logic. They're brittle by design: every edge case requires explicit handling, every change to an upstream API requires a manual update. Hermes takes a different bet: the agent understands intent and can adapt its execution path dynamically. That's not a small shift. It's a fundamental rethinking of what "automation" means when the executor has reasoning capabilities.
+      </p>
+      <div class="gradient-card">
+        <p><strong>Key positioning:</strong> Hermes targets the gap between what automation <em>promises</em> (eliminating repetitive cognitive work) and what it <em>delivers</em> (routing deterministic tasks through rigid pipelines). The bet is that LLM-powered agents can collapse that gap — not by being smarter than rules, but by being adaptive where rules are brittle.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 2 -->
+    <section class="section" id="autonomous-ops">
+      <p class="section-id">02 / Autonomous Agents</p>
+      <h2>Autonomous Agents for <span class="hl-pink">Business Operations</span></h2>
+      <p>
+        The phrase "autonomous agent" gets used loosely. In Hermes's context it has a specific meaning: an agent that can receive a high-level goal, decompose it into steps, invoke the tools and data sources needed to execute those steps, handle unexpected states, and produce a verifiable outcome — all without a human co-piloting each decision.
+      </p>
+      <p>
+        For business operations, this matters because operational work is full of <strong>high-frequency, moderate-complexity tasks</strong> that are too nuanced for simple rule engines but too routine for skilled humans to spend hours on. Customer support ticket triage and routing. Invoice processing and exception handling. Incident response for infrastructure events. Data reconciliation across systems. Meeting prep and summary generation. These tasks have structure, but they require judgment — and judgment is exactly what LLM-powered agents can now supply at scale.
+      </p>
+      <p>
+        Hermes's framing here is worth examining closely. Rather than positioning agents as "AI assistants" (reactive, human-initiated), it positions them as operational workers that run continuously, act on triggers, and take ownership of outcomes. The distinction matters: an assistant waits; an agent runs. An assistant suggests; an agent executes. That shift in mental model changes how you design workflows around them.
+      </p>
+      <div class="callout">
+        <p>The economic case is straightforward: if you can replace 10 hours/week of a senior engineer's operational toil with an agent that runs continuously and costs cents per task, the ROI math is trivial. The harder question is trust — and that's where the platform design matters more than the models inside it.</p>
+      </div>
+      <p>
+        Hermes specifically targets support, operations, analytics, and productivity workloads — a sensible initial scope. These domains share a useful property: outcomes are largely verifiable. A ticket was routed correctly. A report was generated. An alert was escalated. Verifiable outcomes are the precondition for safe autonomous operation, because you can catch and correct errors before they compound into something larger.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 3 -->
+    <section class="section" id="orchestration">
+      <p class="section-id">03 / Architecture</p>
+      <h2>Workflow <span class="hl-purple">Orchestration</span> Architecture</h2>
+      <p>
+        The orchestration layer is where the real engineering lives. Any LLM can string together tool calls. The hard problem is doing so reliably, at scale, across heterogeneous systems, while maintaining state across long-running operations and recovering gracefully from failures.
+      </p>
+      <p>
+        A mature orchestration architecture for business agents needs to handle several concerns simultaneously:
+      </p>
+      <div class="pillars">
+        <div class="pillar">
+          <p class="pillar-icon">01</p>
+          <h4>State Management</h4>
+          <p>Long-running workflows that span hours or days require durable state. The agent must pause, resume, and recover without losing context — much like a saga pattern in distributed systems.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">02</p>
+          <h4>Tool Routing</h4>
+          <p>Agents need clean abstractions over heterogeneous APIs. A well-designed tool layer gives the orchestrator a consistent interface whether the underlying system is Salesforce, a REST API, or a SQL database.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">03</p>
+          <h4>Retry &amp; Recovery</h4>
+          <p>Real systems fail intermittently. The orchestrator must distinguish retriable errors from fatal ones, implement backoff, and escalate to human review when failure patterns are unexpected.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">04</p>
+          <h4>Context Scoping</h4>
+          <p>Not every tool call needs full workflow context. Passing only what's relevant to each sub-task keeps inference costs low and reduces the noise that leads to reasoning errors.</p>
+        </div>
+      </div>
+      <p>
+        Hermes's approach of combining reasoning with execution in a unified platform sidesteps a common trap: building the orchestration layer separately from the reasoning layer, then fighting the impedance mismatch between them. When the same system plans and executes, it can adjust plans dynamically based on what execution reveals — a critical capability for workflows where you can't fully specify all branches upfront.
+      </p>
+      <div class="gradient-card">
+        <p><strong>For practitioners evaluating orchestration architectures:</strong> The key question is where failure modes surface. In deterministic pipelines, failures are predictable. In agent-driven systems, failures can be subtle — the agent <em>completed</em> a task, just not the <em>right</em> task. Your observability layer needs to account for semantic correctness, not just execution success.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 4 -->
+    <section class="section" id="hitl">
+      <p class="section-id">04 / Control</p>
+      <h2>Human-in-the-Loop <span class="hl-pink">Controls</span></h2>
+      <p>
+        Autonomous doesn't mean unsupervised. This is one of the most important distinctions to understand when evaluating agent platforms — and one where many early deployments have failed, leading to reflexive skepticism that "AI can't be trusted to act autonomously."
+      </p>
+      <p>
+        The right mental model isn't a binary choice between full autonomy and human approval for everything. It's a <strong>graduated trust model</strong> where oversight is calibrated to the risk and reversibility of each action type. Low-risk, high-reversibility actions (drafting a response, tagging a ticket, running a read-only query) can proceed without a human gate. High-risk or irreversible actions (sending an email externally, modifying production data, triggering a financial transaction) should require explicit approval.
+      </p>
+      <p>
+        Hermes builds this into its architecture through explicit approval workflows. This is the right design choice. The alternative — letting the agent decide when it needs approval — is a recipe for edge cases where the agent confidently executes something a human would have stopped. Trust is earned incrementally; the platform should make that increment configurable and auditable.
+      </p>
+      <div class="callout pink">
+        <p>Human-in-the-loop design is also a risk surface in the <em>other</em> direction: too many approval gates and the agent offers no productivity gain — you've just replaced automation with a slightly smarter routing layer. Where the gates go is a product and operational decision, not purely a safety one. Most teams calibrate this wrong the first time.</p>
+      </div>
+      <p>
+        Well-designed HITL systems also generate useful training signal. Every approval or rejection is a data point about where the agent's judgment diverges from human judgment. Over time, you can use that data to refine prompts, adjust confidence thresholds, or identify systematic reasoning errors. The best agent deployments treat HITL not as a safety net but as a feedback loop — a way to gradually and safely expand autonomous scope.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 5 -->
+    <section class="section" id="multi-agent">
+      <p class="section-id">05 / Coordination</p>
+      <h2>Multi-Agent <span class="hl-purple">Collaboration</span> and Orchestration</h2>
+      <p>
+        Single-agent architectures hit a ceiling. Complex business workflows span multiple domains, involve multiple systems, and often require parallel execution across independent sub-tasks. Multi-agent systems address this by allowing specialized agents to collaborate — each owning a domain, with an orchestrator routing work between them.
+      </p>
+      <p>
+        This mirrors how human organizations actually work. You don't have one generalist handle a product launch; you have marketing, engineering, ops, and legal working in parallel with coordination at the project management layer. Multi-agent architectures apply the same logic: specialization reduces error, parallelism reduces latency, and explicit coordination ensures coherence across the full workflow.
+      </p>
+      <div class="pillars">
+        <div class="pillar">
+          <p class="pillar-icon" style="color: var(--pink);">→</p>
+          <h4>Supervisor / Worker</h4>
+          <p>An orchestrator agent decomposes a goal and delegates sub-tasks to specialized worker agents. Results are synthesized back at the supervisor level before any output is committed.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon" style="color: var(--pink);">→</p>
+          <h4>Peer Review</h4>
+          <p>One agent produces output; a second agent reviews it for errors before it proceeds. Simple pattern with high reliability improvement for structured outputs like reports or code.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon" style="color: var(--pink);">→</p>
+          <h4>Pipeline Stages</h4>
+          <p>Sequential handoffs between domain-specific agents — research → analysis → recommendation → execution — with full context passed between stages and a checkpoint at each boundary.</p>
+        </div>
+      </div>
+      <p>
+        The critical engineering concern in multi-agent systems is <strong>communication protocol design</strong>. If agents communicate through loosely structured messages, errors compound and debugging becomes nearly impossible. The best implementations treat inter-agent communication as a formal interface — typed, versioned, and fully logged with correlation IDs that span the entire workflow graph.
+      </p>
+      <div class="gradient-card">
+        <p>Multi-agent systems also expose a new class of failure: emergent behavior from interactions between agents that each appear correct in isolation. This is a real operational hazard. Comprehensive trace logging across all agent interactions isn't optional in production — it's the only way to diagnose issues that manifest at the coordination layer, not within any single agent.</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 6 -->
+    <section class="section" id="enterprise">
+      <p class="section-id">06 / Production</p>
+      <h2>Enterprise-Grade: Security, Observability <span class="hl-pink">&amp; Scale</span></h2>
+      <p>
+        The gap between a working agent demo and a production-ready enterprise deployment is enormous. This is not unique to agents — it's true of any system — but the gap is wider here because failure modes are less predictable and audit requirements are more demanding than conventional software.
+      </p>
+      <p>
+        <strong>Security</strong> in agent systems has two dimensions that don't exist in traditional software. First: credential management. Agents need access to real systems — email, databases, CRMs, APIs. Those credentials need to be managed, rotated, and scoped with the principle of least privilege. An agent with broad write access to production systems is a significant blast radius waiting to happen. Second: prompt injection. Because agents process external content (emails, tickets, documents) as part of their reasoning, adversarial inputs in that content can hijack agent behavior. This is a known attack vector in the wild. Production deployments need sanitization layers between external inputs and the agent's reasoning chain.
+      </p>
+      <p>
+        <strong>Observability</strong> means something richer for agents than for conventional services. Standard logging tells you what code path executed. For agents, you also need to know <em>why</em> the agent made each decision — what it considered, what it was uncertain about, what alternatives it rejected. Without this, debugging agent behavior in production is guesswork. Hermes's emphasis on observable execution is the right instinct; what determines whether this is a checkbox feature or a genuinely useful capability is the implementation depth.
+      </p>
+      <div class="callout">
+        <p><strong>On scale:</strong> Agent workloads have a fundamentally different cost structure than conventional compute. LLM inference is expensive and has non-trivial per-operation latency. Scaling an agent platform means managing token budgets, caching reasoning artifacts where possible, and designing workflows to minimize redundant inference calls. Most teams don't have good intuitions for this yet — and that's a gap that will become visible fast once usage grows.</p>
+      </div>
+      <p>
+        Integration depth with existing platforms — Slack, Jira, Salesforce, custom internal tools — is table stakes for enterprise adoption. The platforms that win this space will have maintained, deep integrations, not just generic webhook support. "Easy integration" is a product promise; the delivery is in the connector quality and the reliability of change tracking when upstream APIs evolve or break.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECTION 7 -->
+    <section class="section" id="so-what">
+      <p class="section-id">07 / Practitioner's Take</p>
+      <h2>The <span class="hl-purple">Practitioner's</span> Take</h2>
+      <p>
+        The agent platform space is crowded and moving fast. Hermes enters with a credible value proposition: a unified platform that handles reasoning, orchestration, and execution without requiring enterprises to assemble these pieces themselves. That's the right architectural bet. Platforms that will win are those that make the hard infrastructure problems — state management, HITL design, security, observability — invisible, so product teams can focus on defining business logic rather than plumbing.
+      </p>
+      <p>
+        Before committing to any agent platform, evaluate these four dimensions honestly:
+      </p>
+      <div class="pillars">
+        <div class="pillar">
+          <p class="pillar-icon">Q1</p>
+          <h4>Failure Model</h4>
+          <p>What happens when the agent makes a wrong decision? Can you inspect why? Can you replay the execution with corrections? If the answer is unclear, the platform isn't production-ready.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">Q2</p>
+          <h4>Trust Escalation</h4>
+          <p>How granular are the HITL controls? Can you tune them per action type? The ability to expand agent autonomy gradually and safely is what separates careful deployments from reckless ones.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">Q3</p>
+          <h4>Cost Visibility</h4>
+          <p>What does a workflow actually cost per run? Token costs are non-trivial at scale. Without per-workflow cost attribution, you can't manage operational spend or make informed build-vs-buy decisions.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-icon">Q4</p>
+          <h4>Integration Depth</h4>
+          <p>Against your actual systems — not demo integrations. Test against your real stack before committing. The difference between "supports" and "works reliably" is where most deployments diverge from the sales deck.</p>
+        </div>
+      </div>
+      <p>
+        The broader shift Hermes represents is worth naming explicitly: we are moving from <strong>automation as execution of deterministic rules</strong> to <strong>automation as execution of goals</strong>. Goals can adapt; rules can't. Goals can handle ambiguity; rules fail at the edges. The engineering challenge is ensuring goal-oriented agents operate within boundaries that match business and compliance requirements — and that's a solved-enough problem, at the infrastructure level, to make this generation of agent platforms genuinely deployable in production.
+      </p>
+      <div class="gradient-card">
+        <p>If you're building in this space: invest in observability and evaluation infrastructure first. Getting an agent to run is easy. Knowing whether it's running <em>correctly</em> — consistently, safely, at scale — is the hard part. That investment compounds as your agent surface area grows, and the teams that build it early will move faster when they need to debug, audit, or expand scope.</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <p class="footer-mark">The <span>Weekly</span></p>
+      <p>Issue #2 &nbsp;·&nbsp; Week 21 &nbsp;·&nbsp; May 22, 2026</p>
+      <div class="footer-links">
+        <a href="../index.html">← Back to Archive</a>
+        <span class="footer-sep" aria-hidden="true"></span>
+        <a href="https://weekly.mandar.me/">weekly.mandar.me</a>
+        <span class="footer-sep" aria-hidden="true"></span>
+        <a href="https://github.com/manddar/weekly">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Reading progress bar
+  const progressBar = document.getElementById('progressBar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // Section fade-in via IntersectionObserver
+  const sections = document.querySelectorAll('.section');
+  const fadeObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        fadeObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+  sections.forEach(s => fadeObs.observe(s));
+
+  // Side TOC scroll-spy
+  const sideLinks = document.querySelectorAll('.side-toc a');
+  const linkById = {};
+  sideLinks.forEach(a => { linkById[a.dataset.target] = a; });
+
+  const spyObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const link = linkById[e.target.id];
+      if (!link) return;
+      if (e.isIntersecting) {
+        sideLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+  sections.forEach(s => spyObs.observe(s));
+</script>
+
+</body>
+</html>
