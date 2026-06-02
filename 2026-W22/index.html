@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paperclip: Operating System for AI Organizations | The Weekly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:ital,opsz,wght@0,14..32,200;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --text: #1a1a1a;
+      --text-light: #4a4a4a;
+      --accent: #c0392b;
+      --accent-light: rgba(192, 57, 43, 0.06);
+      --accent-border: rgba(192, 57, 43, 0.2);
+      --divider: #e8e3db;
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--f-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 40px;
+      margin-bottom: 60px;
+    }
+
+    .issue-badge {
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: var(--f-display);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .header-meta {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Navigation / TOC */
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 32px;
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      margin-bottom: 60px;
+    }
+
+    .toc-title {
+      grid-column: 1 / -1;
+      font-family: var(--f-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--accent-border);
+      padding-bottom: 4px;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    /* Two-column layout */
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 80px;
+    }
+
+    @media (max-width: 768px) {
+      .two-column {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    section {
+      scroll-margin-top: 100px;
+    }
+
+    section h2 {
+      font-family: var(--f-display);
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    section p {
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    section p:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 60px 0;
+    }
+
+    .highlight {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      padding: 20px 20px;
+      margin: 24px 0;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 2px solid var(--accent);
+      padding-top: 40px;
+      margin-top: 80px;
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--accent-border);
+    }
+
+    footer a:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 16px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      section h2 {
+        font-size: 22px;
+      }
+
+      .toc {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="issue-badge">Issue #3 · June 2, 2026</div>
+      <h1>Paperclip: Operating System for AI Organizations</h1>
+      <p class="header-meta">How an open-source platform turns individual agents into productive teams with governance, budgets, and human oversight.</p>
+    </header>
+
+    <nav class="toc">
+      <div class="toc-title">In This Issue</div>
+      <a href="#agents-as-employees">Agents as Employees</a>
+      <a href="#multi-agent-orchestration">Multi-Agent Orchestration</a>
+      <a href="#governance-oversight">Governance & Oversight</a>
+      <a href="#real-world-applications">Real-World Applications</a>
+    </nav>
+
+    <div class="two-column">
+      <section id="agents-as-employees">
+        <h2>Agents as Employees</h2>
+        <p>We've reached an inflection point in how we think about AI. No longer are we asking "Can an AI agent do X task?" but rather "Can we build a team of AI agents that work like a real company?"</p>
+        <p><strong>Paperclip</strong> answers that question head-on. It's an open-source platform that reframes the relationship between humans and AI from "prompting a tool" to "managing a team." If a single Claude instance is an employee, Paperclip is the company that hires, organizes, and directs them.</p>
+        <p>The fundamental shift here is structural. Rather than issuing commands to individual agents or orchestrating calls in custom code, Paperclip provides organizational primitives: departments, roles, reporting hierarchies, career progression, and accountability. An agent doesn't just have instructions—it has a job title, a manager, goals to meet, and a budget to stay within.</p>
+        <p>This framing matters because it forces you to think in terms of delegation and trust, not control. You're not micromanaging agents into doing exactly what you want. You're setting expectations, giving them tools and autonomy, and letting them coordinate with their peers to hit business objectives.</p>
+      </section>
+
+      <section id="multi-agent-orchestration">
+        <h2>Multi-Agent Orchestration</h2>
+        <p>Any sufficiently complex business requires multiple specialized roles working in concert. A marketing team doesn't have a single person doing all the work—they have copywriters, designers, analysts, and strategists, each with different skills and responsibilities.</p>
+        <p>Paperclip operationalizes this for AI. It coordinates multiple specialized agents toward shared business outcomes. An agent focused on content creation might delegate research tasks to a research agent, which surfaces competitive intelligence to a strategy agent, which informs budget decisions presented to finance.</p>
+        <p>This is more powerful than simple task queues or daisy-chaining prompts. Agents in Paperclip maintain context about organizational goals, can ask clarifying questions of their peers, and understand which decisions require escalation to humans. The system handles cross-functional workflows in engineering, marketing, research, and operations—areas where siloed individual agents would struggle.</p>
+        <p>The platform provides tools for delegation, task routing, and dependency tracking. Agents can negotiate with each other about resource allocation and timeline. They can block or wait for peer decisions. It's coordination at the organizational level, not just task scheduling.</p>
+      </section>
+    </div>
+
+    <section class="section-divider"></section>
+
+    <div class="two-column">
+      <section id="governance-oversight">
+        <h2>Governance & Oversight</h2>
+        <p>With great autonomy comes the need for guardrails. Paperclip puts humans in the role of board of directors, not micromanagers. You set policy, define budgets, and approve high-stakes decisions. Day-to-day work runs autonomously within those bounds.</p>
+        <p><strong>Budget controls</strong> are straightforward: each agent gets an allocation of token spend or compute hours. When an agent approaches their limit, they slow down or escalate. This solves one of the trickiest parts of agent systems—runaway costs from infinite loops or poorly optimized workflows.</p>
+        <p><strong>Approval workflows</strong> handle decisions that should never be fully automated: hiring a new agent, increasing a budget, launching a major initiative, or changing strategy. Humans review these requests and approve or reject them. The audit trail is complete.</p>
+        <p><strong>Operational transparency</strong> is built in. You see what agents are doing, why they made decisions, which decisions required human approval, and how much they cost. This isn't shadowy black-box AI—it's an organization you can understand, debug, and steer.</p>
+      </section>
+
+      <section id="real-world-applications">
+        <h2>Real-World Applications</h2>
+        <p>The early use cases are in domains where humans have historically managed teams doing high-variance, knowledge-work: content operations, software development, research and competitive intelligence, customer support, and internal process automation.</p>
+        <p>A content team might have editors, writers, fact-checkers, and researchers coordinating to ship a weekly newsletter. A dev organization might have specialists in different languages or services, each responsible for parts of the system. A research org might have agents that hunt for signals, synthesize findings, and prepare briefings for humans.</p>
+        <p>The common thread: these are domains where the work is complex enough to require multiple perspectives, where communication and coordination matter as much as execution, and where human oversight prevents costly mistakes.</p>
+        <p>Paperclip is self-hosted, MIT-licensed, and model-agnostic. It works with Claude, GPT, and custom agents. There's no vendor lock-in, and organizations retain full control over data, infrastructure, and model choices. For enterprises concerned about compliance, data residency, or architectural control, this is a huge advantage.</p>
+      </section>
+    </div>
+
+    <section class="section-divider"></section>
+
+    <section>
+      <h2>The Bigger Picture</h2>
+      <p>Paperclip is positioned as infrastructure for a future where businesses are run significantly by AI agent teams. Call it ambitious, speculative, or inevitable—but it's clearly where thinking is going. Rather than debate whether "zero-human companies" will exist, the question shifts to "what does governance look like when humans are the oversight layer, not the execution layer?"</p>
+      <p>For practitioners today, it's a signal: we're moving past experimental agents toward production systems with organizational structure, governance, and human control baked in. If you're building multi-agent systems, you're probably solving these problems yourself in ad-hoc ways. Paperclip offers a foundation to build on instead.</p>
+      <p>The newsletter will continue tracking this space—especially how operational patterns, cost management, and human-AI collaboration evolve as agentic systems scale.</p>
+    </section>
+
+    <footer>
+      <p style="margin-bottom: 20px;">Published June 2, 2026 | <a href="../index.html">Back to Archive</a> · <a href="https://weekly.mandar.me/">weekly.mandar.me</a> · <a href="https://github.com/manddar/weekly">GitHub</a></p>
+      <p>The Weekly is a newsletter covering AI, technology, and tooling for practitioners. New issues every Friday.</p>
+    </footer>
+  </div>
+</body>
+</html>
