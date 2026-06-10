@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Skills — The Modular Layer for AI Capability · The Weekly, Week 23</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a1628;
+        --bg-2: #0e1d33;
+        --panel: #102542;
+        --grid: rgba(56, 189, 248, 0.07);
+        --ink: #e8f1fb;
+        --ink-2: #9db4cf;
+        --ink-3: #5d7493;
+        --cyan: #38bdf8;
+        --cyan-2: #67e8f9;
+        --amber: #fbbf24;
+        --rule: rgba(56, 189, 248, 0.18);
+        --f-sans: "Space Grotesk", system-ui, sans-serif;
+        --f-mono: "JetBrains Mono", monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--f-sans);
+        background-color: var(--bg);
+        background-image:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 32px 32px;
+        color: var(--ink);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* noise overlay */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.03;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 160px;
+      }
+
+      .container {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      a {
+        color: var(--cyan);
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--cyan-2);
+      }
+
+      /* ── HEADER ───────────────────────────────────────── */
+      .masthead {
+        border-bottom: 1px solid var(--rule);
+        padding: 28px 0;
+      }
+      .masthead .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .brand {
+        font-family: var(--f-mono);
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      .brand b {
+        color: var(--cyan);
+      }
+      .issue-meta {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--ink-3);
+        letter-spacing: 0.08em;
+      }
+
+      /* ── HERO ─────────────────────────────────────────── */
+      .hero {
+        padding: 72px 0 56px;
+        border-bottom: 1px solid var(--rule);
+        position: relative;
+      }
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        border: 1px solid var(--rule);
+        padding: 6px 12px;
+        border-radius: 3px;
+        margin-bottom: 28px;
+      }
+      .hero-tag::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        background: var(--cyan);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--cyan);
+      }
+      .hero h1 {
+        font-size: clamp(34px, 6vw, 64px);
+        font-weight: 700;
+        line-height: 1.04;
+        letter-spacing: -0.025em;
+        margin-bottom: 24px;
+      }
+      .hero h1 span {
+        color: var(--cyan);
+      }
+      .hero-lede {
+        font-size: clamp(16px, 2.2vw, 20px);
+        color: var(--ink-2);
+        max-width: 680px;
+        font-weight: 400;
+      }
+      .hero-byline {
+        margin-top: 32px;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--ink-3);
+        letter-spacing: 0.06em;
+      }
+
+      /* ── TOC ──────────────────────────────────────────── */
+      .toc {
+        padding: 40px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .toc-title {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 20px;
+      }
+      .toc-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .toc-item {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        padding: 12px 14px;
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+        background: var(--bg-2);
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .toc-item:hover {
+        border-color: var(--cyan);
+        background: var(--panel);
+      }
+      .toc-num {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--cyan);
+      }
+      .toc-label {
+        font-size: 14px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      /* ── SECTION ──────────────────────────────────────── */
+      section.topic {
+        padding: 56px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .topic-head {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .topic-num {
+        font-family: var(--f-mono);
+        font-size: 13px;
+        color: var(--bg);
+        background: var(--cyan);
+        padding: 3px 9px;
+        border-radius: 3px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .topic-head h2 {
+        font-size: clamp(24px, 3.6vw, 36px);
+        font-weight: 700;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+      }
+      .topic p {
+        color: var(--ink-2);
+        font-size: 16px;
+        margin-bottom: 18px;
+        max-width: 740px;
+      }
+      .topic p strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .topic ul {
+        margin: 0 0 18px 0;
+        padding-left: 0;
+        list-style: none;
+        max-width: 740px;
+      }
+      .topic ul li {
+        position: relative;
+        padding-left: 26px;
+        margin-bottom: 8px;
+        color: var(--ink-2);
+        font-size: 15px;
+      }
+      .topic ul li::before {
+        content: "▸";
+        position: absolute;
+        left: 4px;
+        color: var(--cyan);
+      }
+
+      .callout {
+        border-left: 3px solid var(--amber);
+        background: rgba(251, 191, 36, 0.06);
+        padding: 16px 20px;
+        border-radius: 0 4px 4px 0;
+        margin: 20px 0;
+        max-width: 740px;
+      }
+      .callout p {
+        margin: 0;
+        color: var(--ink);
+        font-size: 15px;
+      }
+      .callout .lbl {
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--amber);
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      blockquote {
+        border-left: 3px solid var(--cyan);
+        padding: 4px 20px;
+        margin: 20px 0;
+        max-width: 740px;
+        color: var(--ink);
+        font-style: italic;
+        font-size: 16px;
+      }
+      blockquote cite {
+        display: block;
+        margin-top: 8px;
+        font-style: normal;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+
+      pre {
+        background: #061120;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 20px;
+        overflow-x: auto;
+        margin: 20px 0;
+        max-width: 740px;
+      }
+      pre code {
+        font-family: var(--f-mono);
+        font-size: 13px;
+        color: var(--cyan-2);
+        line-height: 1.6;
+      }
+      .dim {
+        color: var(--ink-3);
+      }
+      .key {
+        color: var(--amber);
+      }
+
+      /* two-col equation: skills vs mcp */
+      .vs {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 16px;
+        align-items: center;
+        margin: 24px 0;
+        max-width: 740px;
+      }
+      .vs-card {
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 22px;
+        background: var(--bg-2);
+      }
+      .vs-card h4 {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 8px;
+      }
+      .vs-card p {
+        margin: 0;
+        font-size: 14px;
+      }
+      .vs-op {
+        font-size: 28px;
+        color: var(--ink-3);
+        font-weight: 700;
+      }
+
+      /* ── CLOSING / LINKS ──────────────────────────────── */
+      .links-block {
+        padding: 48px 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .links-block h3 {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 20px;
+      }
+      .link-row {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+        padding: 12px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .link-row .src {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--ink-3);
+        flex-shrink: 0;
+        width: 130px;
+      }
+      .link-row a {
+        font-size: 15px;
+      }
+
+      /* ── FOOTER ───────────────────────────────────────── */
+      footer {
+        padding: 40px 0 60px;
+        text-align: center;
+      }
+      footer .nav {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      footer .nav a {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      footer p {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+      }
+
+      @media (max-width: 600px) {
+        .vs {
+          grid-template-columns: 1fr;
+        }
+        .vs-op {
+          text-align: center;
+        }
+        .link-row {
+          flex-direction: column;
+          gap: 4px;
+        }
+        .link-row .src {
+          width: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="masthead">
+      <div class="container">
+        <span class="brand">The<b>.</b>Weekly</span>
+        <span class="issue-meta">ISSUE #04 · 2026-W23 · JUN 05 2026</span>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="container">
+        <span class="hero-tag">Agent Architecture</span>
+        <h1>Agent Skills — the modular layer for <span>AI capability</span></h1>
+        <p class="hero-lede">
+          Prompts told an agent what to do. Tools gave it hands. Skills are the
+          missing middle: portable, versioned packages of know-how an agent
+          loads only when the task demands it. Here's how the skills ecosystem
+          actually works — packaging, discovery, dynamic loading, governance —
+          and why it's becoming the unit of reuse for production agents.
+        </p>
+        <p class="hero-byline">
+          // 10 modules · ~14 min read · written for builders
+        </p>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc">
+      <div class="container">
+        <p class="toc-title">Index · what's inside</p>
+        <div class="toc-grid">
+          <a class="toc-item" href="#s1"><span class="toc-num">01</span><span class="toc-label">What a Skill Is</span></a>
+          <a class="toc-item" href="#s2"><span class="toc-num">02</span><span class="toc-label">Packaging & Contracts</span></a>
+          <a class="toc-item" href="#s3"><span class="toc-num">03</span><span class="toc-label">Discovery</span></a>
+          <a class="toc-item" href="#s4"><span class="toc-num">04</span><span class="toc-label">Dynamic Loading</span></a>
+          <a class="toc-item" href="#s5"><span class="toc-num">05</span><span class="toc-label">Execution Framework</span></a>
+          <a class="toc-item" href="#s6"><span class="toc-num">06</span><span class="toc-label">Skills vs. MCP</span></a>
+          <a class="toc-item" href="#s7"><span class="toc-num">07</span><span class="toc-label">Versioning</span></a>
+          <a class="toc-item" href="#s8"><span class="toc-num">08</span><span class="toc-label">Governance</span></a>
+          <a class="toc-item" href="#s9"><span class="toc-num">09</span><span class="toc-label">Analytics & Composition</span></a>
+          <a class="toc-item" href="#s10"><span class="toc-num">10</span><span class="toc-label">The Library Ecosystem</span></a>
+        </div>
+      </div>
+    </div>
+
+    <main class="container">
+      <!-- 01 -->
+      <section class="topic" id="s1">
+        <div class="topic-head">
+          <span class="topic-num">01</span>
+          <h2>What an Agent Skill actually is</h2>
+        </div>
+        <p>
+          An <strong>Agent Skill</strong> is a reusable capability package that
+          teaches an agent how to perform a specific task or workflow. Strip
+          away the marketing and it is something refreshingly boring: a folder.
+          Inside that folder sits a manifest, a set of instructions, and any
+          supporting templates, examples, scripts, and reference files the agent
+          might need to do the job well.
+        </p>
+        <blockquote>
+          "Agent Skills are a lightweight, open format for extending AI agent
+          capabilities with specialized knowledge and workflows."
+          <cite>— Agent Skills, agentskills.io</cite>
+        </blockquote>
+        <p>
+          The framing that has stuck across the ecosystem: skills are
+          <strong>folders of instructions, scripts, and resources that the
+          model loads dynamically</strong> to perform better on specialized
+          tasks. The important word is <em>dynamically</em>. A skill is not
+          baked into a system prompt and it is not a fine-tune. It sits on disk,
+          inert, until the agent decides the current task matches it — then its
+          contents flow into context.
+        </p>
+        <p>
+          Why does this matter for practitioners? Because it decouples
+          <strong>capability</strong> from <strong>the model</strong> and from
+          <strong>the prompt</strong>. You can ship a "fill out an SOC 2
+          evidence request" skill the same way you ship an npm package: write
+          it once, version it, hand it to every agent in the org. The skill
+          becomes the unit of reuse — the thing you author, review, and improve
+          — instead of copy-pasting paragraphs of guidance into every project.
+        </p>
+      </section>
+
+      <!-- 02 -->
+      <section class="topic" id="s2">
+        <div class="topic-head">
+          <span class="topic-num">02</span>
+          <h2>Packaging: the SKILL.md and its contracts</h2>
+        </div>
+        <p>
+          The specification defines a skill as a folder containing a
+          <strong>SKILL.md</strong> plus optional resources. The SKILL.md
+          carries metadata in frontmatter and instructions in the body. The
+          metadata is not decoration — it is the routing layer. The
+          <span class="key">description</span> field in particular is what the
+          agent reads to decide whether the skill is relevant, so a vague
+          description means a skill that never fires.
+        </p>
+        <pre><code><span class="dim">---</span>
+name: <span class="key">soc2-evidence-request</span>
+description: <span class="key">Draft & format SOC 2 evidence</span>
+              <span class="key">responses from a control ID.</span>
+version: 1.4.0
+tags: [compliance, security, audit]
+<span class="dim">---</span>
+
+<span class="dim"># Instructions</span>
+1. Resolve the control ID against controls.csv
+2. Pull the evidence template from templates/
+3. Validate completeness with rules below
+...</code></pre>
+        <p>What a well-formed skill carries:</p>
+        <ul>
+          <li><strong>Metadata</strong> — name, description, version, tags</li>
+          <li><strong>Input / output contracts</strong> — what the skill expects and what it promises to return</li>
+          <li><strong>Instructions & workflow</strong> — the step-by-step procedure</li>
+          <li><strong>Templates & examples</strong> — concrete artifacts, not abstract advice</li>
+          <li><strong>Supporting scripts & assets</strong> — deterministic code the agent can run instead of hallucinating</li>
+          <li><strong>Dependency declarations</strong> — what tools or other skills it relies on</li>
+        </ul>
+        <div class="callout">
+          <span class="lbl">So what</span>
+          <p>
+            Treat the description and contract as the public API. Everything
+            else is implementation detail you can refactor freely — but change
+            the contract and you've shipped a breaking change to every agent
+            that depends on it.
+          </p>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="topic" id="s3">
+        <div class="topic-head">
+          <span class="topic-num">03</span>
+          <h2>Discovery: how an agent finds the right skill</h2>
+        </div>
+        <p>
+          Once you have more than a handful of skills, finding the right one
+          becomes the whole game. Mature skill platforms behave like package
+          registries crossed with a search engine. The catalogue is searchable,
+          skills are grouped into categories and tags, and increasingly the
+          match is <strong>semantic</strong> — the agent's task description is
+          embedded and compared against skill descriptions rather than matched
+          on exact keywords.
+        </p>
+        <ul>
+          <li>Searchable catalogue with categories and tags</li>
+          <li>Semantic search over skill descriptions</li>
+          <li>Recommendations based on the current task</li>
+          <li>Surfacing of popular and trending skills</li>
+        </ul>
+        <p>
+          Public libraries already list <strong>thousands</strong> of
+          discoverable skills across engineering, analytics, marketing, and
+          design. That scale is exactly why discovery is hard: a flat list of
+          5,000 skills is useless to an agent with a finite context window. The
+          retrieval quality — does the agent surface the <em>right three</em>
+          skills for this task — now matters as much as the skills themselves.
+          This is the same lesson RAG taught us, applied to capability instead
+          of knowledge.
+        </p>
+      </section>
+
+      <!-- 04 -->
+      <section class="topic" id="s4">
+        <div class="topic-head">
+          <span class="topic-num">04</span>
+          <h2>Dynamic loading: pay for context only when you use it</h2>
+        </div>
+        <p>
+          The defining behaviour of skills is <strong>progressive
+          disclosure</strong>. Rather than stuffing every instruction into the
+          system prompt up front, the agent loads a skill's full contents only
+          when the task calls for it. At rest, the agent knows just enough — the
+          name and one-line description — to decide relevance. The expensive
+          payload arrives on demand.
+        </p>
+        <ul>
+          <li>Load skills only when needed — context-aware activation</li>
+          <li>Keep the base prompt small and cheap</li>
+          <li>Lazy loading and caching of skill bodies</li>
+        </ul>
+        <p>
+          The economics are the point. Context is a fixed budget paid on every
+          single turn. A 4,000-token skill loaded eagerly costs you on every
+          request whether or not it's used; loaded lazily it costs nothing until
+          the one task that needs it. Modern agent systems lean hard on this
+          on-demand retrieval rather than front-loading all instructions — it's
+          what lets a single agent plausibly "know" hundreds of skills without
+          drowning in its own prompt.
+        </p>
+        <div class="callout">
+          <span class="lbl">Practitioner note</span>
+          <p>
+            Cache the skill body once loaded within a session. Re-reading the
+            same SKILL.md on every turn of a multi-step task quietly burns the
+            savings progressive disclosure was supposed to buy you.
+          </p>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="topic" id="s5">
+        <div class="topic-head">
+          <span class="topic-num">05</span>
+          <h2>The execution framework: how to think, made repeatable</h2>
+        </div>
+        <p>
+          A skill is more than a paragraph of advice — it encodes a procedure.
+          The execution layer is where step-by-step workflows, tool
+          orchestration, validation checks, error handling, and retry
+          strategies live. The skill says <em>"do these steps in this order,
+          validate after step 3, and if the API 429s back off and retry
+          twice."</em>
+        </p>
+        <ul>
+          <li>Step-by-step workflows the agent follows deterministically</li>
+          <li>Orchestration of the tools the skill depends on</li>
+          <li>Validation checks between steps</li>
+          <li>Explicit error handling and retry strategies</li>
+        </ul>
+        <p>
+          The clean mental model — popularised in IBM's developer writing on
+          the topic — is that <strong>skills define how the agent should
+          perform a task, while tools provide the actions available to the
+          agent.</strong> A skill is the recipe; tools are the kitchen. This
+          separation is what makes skills portable: the same "reconcile an
+          invoice" skill can run against whatever payment tools a given
+          deployment happens to expose, as long as the contract is satisfied.
+        </p>
+      </section>
+
+      <!-- 06 -->
+      <section class="topic" id="s6">
+        <div class="topic-head">
+          <span class="topic-num">06</span>
+          <h2>Skills vs. MCP: how to think vs. how to act</h2>
+        </div>
+        <p>
+          The most useful distinction in the whole space, and the one people get
+          wrong most often. Skills and MCP servers are not competitors — they
+          are complementary layers, and a serious agent uses both.
+        </p>
+        <div class="vs">
+          <div class="vs-card">
+            <h4>Skills</h4>
+            <p>
+              How to <strong>think</strong>. Instructions, workflows, judgement,
+              the procedure for getting a task right. Knowledge that lives in
+              context.
+            </p>
+          </div>
+          <div class="vs-op">+</div>
+          <div class="vs-card">
+            <h4>MCP Servers</h4>
+            <p>
+              How to <strong>act</strong>. Discoverable tools, external system
+              access, capability descriptions. The actions the agent can
+              actually take.
+            </p>
+          </div>
+        </div>
+        <p>
+          The integration points matter: MCP handles server discovery and tool
+          capability descriptions; the skill maps its workflow onto whatever
+          tools are available, reaching external systems through them. You can
+          have great tools and no idea how to sequence them (capable but
+          aimless), or a beautiful workflow with no way to touch the world (a
+          plan with no hands). Production agents need the pair: a skill that
+          knows the procedure, bound to MCP tools that execute it.
+        </p>
+      </section>
+
+      <!-- 07 -->
+      <section class="topic" id="s7">
+        <div class="topic-head">
+          <span class="topic-num">07</span>
+          <h2>Versioning: skills are software, treat them that way</h2>
+        </div>
+        <p>
+          The moment a skill is shared across teams, it inherits every problem
+          of shared software. Workflows evolve, a regulation changes, an
+          internal API is deprecated — and the skill must move with them
+          without silently breaking the agents that depend on it.
+        </p>
+        <ul>
+          <li>Version control on the skill folder</li>
+          <li>Backward compatibility guarantees on the contract</li>
+          <li>Controlled upgrades and change tracking</li>
+          <li>Rollback when an upgrade misbehaves</li>
+        </ul>
+        <p>
+          This is mundane and absolutely essential, especially in enterprise
+          settings where an agent's behaviour is part of an audited process. A
+          skill bumped from <span class="key">1.4.0</span> to
+          <span class="key">2.0.0</span> should signal a breaking contract
+          change as loudly as any library would. The teams getting this right
+          are pinning skill versions per agent and rolling upgrades the way they
+          roll dependency bumps — staged, observable, reversible — not editing a
+          shared SKILL.md in place and hoping nothing downstream notices.
+        </p>
+      </section>
+
+      <!-- 08 -->
+      <section class="topic" id="s8">
+        <div class="topic-head">
+          <span class="topic-num">08</span>
+          <h2>Governance: the lifecycle of a skill library</h2>
+        </div>
+        <p>
+          Once skills carry real organizational authority — they encode SOPs,
+          security guidelines, coding standards — who is allowed to publish one
+          becomes a governance question, not a technical one. Recent research is
+          squarely focused on the <strong>lifecycle</strong> of large skill
+          libraries: collection, recommendation, and evolution over time.
+        </p>
+        <ul>
+          <li>Approval workflow before a skill goes live</li>
+          <li>Security review of any scripts a skill ships</li>
+          <li>Quality scoring and clear ownership</li>
+          <li>Lifecycle management — deprecation and retirement</li>
+        </ul>
+        <blockquote>
+          "SkillsVote: Lifecycle Governance of Agent Skills from Collection,
+          Recommendation to Evolution."
+          <cite>— arXiv:2605.18401</cite>
+        </blockquote>
+        <p>
+          The security angle deserves emphasis. A skill that ships executable
+          scripts is, functionally, code you are letting an autonomous agent run
+          on your behalf. An unreviewed skill in a shared catalogue is a supply
+          chain risk dressed up as a productivity feature. The same review rigor
+          you apply to a dependency — provenance, what it executes, what it can
+          reach — belongs on every skill before it enters the library.
+        </p>
+      </section>
+
+      <!-- 09 -->
+      <section class="topic" id="s9">
+        <div class="topic-head">
+          <span class="topic-num">09</span>
+          <h2>Analytics &amp; composition: measure, then chain</h2>
+        </div>
+        <p>
+          You cannot improve a library you don't measure. Skill analytics close
+          the loop: which skills fire often, which succeed, which are expensive,
+          which quietly fail. Usage frequency, success rate, user feedback, cost
+          and latency — together they tell you which skills are load-bearing and
+          which are dead weight worth retiring.
+        </p>
+        <ul>
+          <li>Usage frequency and success rate</li>
+          <li>User feedback on outcomes</li>
+          <li>Cost and latency per skill</li>
+          <li>Effectiveness, to find high-value and underperforming skills</li>
+        </ul>
+        <p>
+          The frontier is <strong>composition</strong>. Real work rarely maps to
+          a single skill — it needs several, chained, with parent-child
+          relationships and dependency graphs between them. Emerging research
+          shows agents do better when skills are retrieved and grouped as
+          <em>workflow units</em> rather than pulled in as isolated
+          instructions.
+        </p>
+        <blockquote>
+          "Group of Skills: Group-Structured Skill Retrieval for Agent Skill
+          Libraries."
+          <cite>— arXiv:2605.06978</cite>
+        </blockquote>
+        <p>
+          The implication for builders: stop authoring skills as lonely islands.
+          Design them to compose — explicit dependencies, clean contracts at the
+          seams — so the retrieval layer can assemble the right <em>bundle</em>
+          for a task instead of betting everything on one perfect monolith.
+        </p>
+      </section>
+
+      <!-- 10 -->
+      <section class="topic" id="s10">
+        <div class="topic-head">
+          <span class="topic-num">10</span>
+          <h2>The library ecosystem: where skills live today</h2>
+        </div>
+        <p>
+          The market has already produced public skill libraries, and their
+          design choices preview where this is heading. Three are worth
+          knowing:
+        </p>
+        <ul>
+          <li>
+            <strong>Skills Library</strong> — a large catalogue built around a
+            copy-paste install model, with categories spanning writing, design,
+            analytics, and productivity. Bet: simplicity and discoverability win.
+          </li>
+          <li>
+            <strong>MCPServers Agent Skills</strong> — reusable skills for Claude
+            Code, Codex, Cursor and similar agents, combining instructions with
+            executable assets and leaning hard into the MCP ecosystem. Sample
+            skills: Frontend Design, Figma Code Connect, Document Processing,
+            Data Analysis, Skill Creator.
+          </li>
+          <li>
+            <strong>Skills.rest</strong> — a marketplace framing: a vetted
+            repository, on-demand installation, categories across engineering,
+            finance, research, legal, and analytics.
+          </li>
+        </ul>
+        <p>
+          The recommended architecture that falls out of all this looks
+          remarkably like a well-structured software package:
+        </p>
+        <pre><code>Skill/
+├── <span class="key">Metadata</span>      <span class="dim"># name, description, version, tags</span>
+├── <span class="key">Instructions</span>  <span class="dim"># the workflow</span>
+├── <span class="key">Resources</span>     <span class="dim"># templates, examples, knowledge</span>
+├── <span class="key">Tool Bindings</span> <span class="dim"># MCP tools, APIs, local functions</span>
+├── <span class="key">Validation</span>    <span class="dim"># rules</span>
+└── <span class="key">Tests</span></code></pre>
+        <p>
+          The throughline of this whole issue: <strong>skills are turning
+          organizational knowledge into reusable agent capability</strong>, and
+          the disciplines that make them work — packaging, versioning, review,
+          measurement — are the ones software engineering already knows by
+          heart. The teams that treat their skill library like a codebase, not a
+          junk drawer of prompts, are the ones whose agents will compound.
+        </p>
+      </section>
+    </main>
+
+    <!-- LINKS -->
+    <div class="links-block">
+      <div class="container">
+        <h3>Sources &amp; further reading</h3>
+        <div class="link-row">
+          <span class="src">Agent Skills</span>
+          <a href="https://agentskills.io/home">agentskills.io — the open skill format overview</a>
+        </div>
+        <div class="link-row">
+          <span class="src">Claude Help</span>
+          <a href="https://support.claude.com/en/articles/12512176-what-are-skills">What are skills? — dynamic loading model</a>
+        </div>
+        <div class="link-row">
+          <span class="src">IBM Developer</span>
+          <a href="https://developer.ibm.com/articles/agent-skills-mcp-servers/">Build intelligent agents with skills and MCP servers</a>
+        </div>
+        <div class="link-row">
+          <span class="src">arXiv</span>
+          <a href="https://arxiv.org/abs/2605.18401">SkillsVote — lifecycle governance of agent skills</a>
+        </div>
+        <div class="link-row">
+          <span class="src">arXiv</span>
+          <a href="https://arxiv.org/abs/2605.06978">Group of Skills — group-structured skill retrieval</a>
+        </div>
+        <div class="link-row">
+          <span class="src">Libraries</span>
+          <a href="https://skills-library.com/">skills-library.com</a>
+        </div>
+        <div class="link-row">
+          <span class="src">Libraries</span>
+          <a href="https://mcpservers.org/agent-skills">mcpservers.org/agent-skills</a>
+        </div>
+        <div class="link-row">
+          <span class="src">Libraries</span>
+          <a href="https://skills.rest/">skills.rest</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="nav">
+          <a href="../index.html">← Back to Archive</a>
+          <a href="https://weekly.mandar.me/">weekly.mandar.me</a>
+          <a href="https://github.com/manddar/weekly">GitHub</a>
+        </div>
+        <p>The Weekly · Issue #04 · June 5, 2026 · Published every Friday</p>
+      </div>
+    </footer>
+  </body>
+</html>
