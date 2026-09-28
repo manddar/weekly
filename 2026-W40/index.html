@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jev & the Rise of Decision-Only AI | The Weekly — Week 40, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --ink: #000000;
+      --ink-2: #555555;
+      --ink-3: #8a8a8a;
+      --accent: #ff0000;
+      --rule: #000000;
+      --rule-light: #d9d9d9;
+      --f-sans: 'Archivo', Helvetica, Arial, sans-serif;
+      --f-mono: 'Space Mono', 'Courier New', monospace;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--f-sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── GRID SYSTEM ─────────────────────────────────────── */
+    .grid-12 {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────── */
+    header.masthead {
+      border-bottom: 4px solid var(--ink);
+      padding: 48px 0 0;
+    }
+
+    .masthead-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--rule);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .masthead-top .accent { color: var(--accent); }
+
+    .masthead-title-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 32px;
+      padding: 32px 0 40px;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .masthead-title-row { grid-template-columns: 1fr; gap: 12px; }
+    }
+
+    .issue-num-block {
+      font-family: var(--f-mono);
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 0.85;
+      color: var(--accent);
+    }
+
+    .issue-num-block span {
+      display: block;
+      font-family: var(--f-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    h1 {
+      font-family: var(--f-sans);
+      font-size: clamp(32px, 5.2vw, 56px);
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+
+    .dek {
+      font-size: 16px;
+      color: var(--ink-2);
+      max-width: 640px;
+      font-weight: 400;
+    }
+
+    /* ── TOC ─────────────────────────────────────────────── */
+    nav.toc {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--rule);
+      border-bottom: 4px solid var(--ink);
+    }
+
+    @media (max-width: 700px) {
+      nav.toc { grid-template-columns: 1fr; }
+    }
+
+    nav.toc a {
+      display: block;
+      padding: 20px 24px;
+      text-decoration: none;
+      color: var(--ink);
+      border-right: 1px solid var(--rule);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    nav.toc a:last-child { border-right: none; }
+
+    @media (max-width: 700px) {
+      nav.toc a { border-right: none; border-bottom: 1px solid var(--rule-light); }
+    }
+
+    nav.toc a .toc-index { color: var(--accent); font-weight: 700; margin-right: 8px; }
+    nav.toc a:hover { background: var(--ink); color: var(--bg); }
+    nav.toc a:hover .toc-index { color: var(--accent); }
+
+    /* ── SECTIONS ────────────────────────────────────────── */
+    section.topic {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--rule-light);
+      scroll-margin-top: 40px;
+    }
+
+    .topic-head {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 700px) {
+      .topic-head { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    .topic-index {
+      font-family: var(--f-mono);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--rule-light);
+      line-height: 1;
+    }
+
+    .topic-body-col {
+      max-width: 680px;
+    }
+
+    section.topic h2 {
+      font-size: clamp(24px, 3.2vw, 34px);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 22px;
+      letter-spacing: -0.005em;
+    }
+
+    section.topic p {
+      margin-bottom: 18px;
+      font-size: 16px;
+      color: var(--ink);
+    }
+
+    section.topic p:last-child { margin-bottom: 0; }
+
+    strong { font-weight: 700; }
+    strong.tag {
+      background: var(--ink);
+      color: var(--bg);
+      padding: 1px 6px;
+      font-weight: 700;
+    }
+
+    a.inline-link {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    a.inline-link:hover { color: var(--accent); }
+
+    /* ── PRIMITIVE SPEC BLOCK ────────────────────────────── */
+    .spec-block {
+      margin: 28px 0 6px;
+      border: 1px solid var(--ink);
+    }
+
+    .spec-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+    }
+
+    .spec-row + .spec-row { border-top: 1px solid var(--rule-light); }
+
+    .spec-row .spec-key {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 12px 14px;
+      background: var(--ink);
+      color: var(--bg);
+      text-transform: uppercase;
+    }
+
+    .spec-row .spec-val {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      padding: 12px 14px;
+      color: var(--ink-2);
+    }
+
+    /* ── COMPARISON TABLE ────────────────────────────────── */
+    .compare-scroll {
+      overflow-x: auto;
+      margin: 28px 0 6px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .compare {
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      font-family: var(--f-mono);
+      font-size: 13px;
+    }
+
+    .compare th, .compare td {
+      border: 1px solid var(--ink);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .compare th {
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .compare td.accent-cell { color: var(--accent); font-weight: 700; }
+
+    /* ── PULL QUOTE ──────────────────────────────────────── */
+    .pull {
+      border-left: 4px solid var(--accent);
+      padding: 4px 0 4px 24px;
+      margin: 32px 0;
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    /* ── CLOSING ─────────────────────────────────────────── */
+    section.closing {
+      padding: 64px 0 72px;
+    }
+
+    section.closing h2 {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    section.closing p {
+      max-width: 720px;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    footer {
+      border-top: 4px solid var(--ink);
+      padding: 32px 0 48px;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 2;
+    }
+
+    footer a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 2px;
+    }
+
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 16px; }
+      section.topic { padding: 44px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="masthead">
+      <div class="masthead-top">
+        <span>The Weekly <span class="accent">·</span> Practitioner's Digest</span>
+        <span>Week 40 <span class="accent">·</span> Oct 2, 2026</span>
+      </div>
+      <div class="masthead-title-row">
+        <div class="issue-num-block">05<span>Issue No.</span></div>
+        <div>
+          <h1>Jev &amp; the Rise of Decision-Only AI</h1>
+          <p class="dek">A new class of model refuses to talk. It returns typed choices, scores, and probabilities instead of sentences — and the open-source world reproduced the trick in under a week.</p>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <a href="#jev"><span class="toc-index">01</span>Jev &amp; System One Models</a>
+      <a href="#openjev"><span class="toc-index">02</span>OpenJev / SemIf</a>
+      <a href="#jevops"><span class="toc-index">03</span>JevOps &amp; the Reaction</a>
+    </nav>
+
+    <section class="topic" id="jev">
+      <div class="topic-head">
+        <div class="topic-index">01</div>
+        <div class="topic-body-col">
+          <h2>Jev &amp; System One Models — AI That Doesn't Talk Back</h2>
+        </div>
+      </div>
+      <div class="topic-body-col" style="margin-left: 0;">
+        <p>On September 15, 2026, a San Francisco startup called <strong>TypeSafe AI</strong> shipped something that, on paper, sounds like a regression: a model that cannot write you a sentence. <strong>Jev</strong>, the company's first public release, never generates free-form text. Every response is a <strong>typed, schema-constrained value</strong> — a choice from a fixed set of options, a score on a scale, or a probability between 0 and 1 — read directly off the model's internal representations rather than decoded token-by-token. TypeSafe calls this new category "System One models," borrowing the label from Daniel Kahneman's fast, intuitive System 1 thinking, and positions it as a companion to chat-style LLMs rather than a replacement for them.</p>
+        <p>The pitch is speed, cost, and correctness. Because Jev samples all possible outputs in parallel instead of generating autoregressively, TypeSafe reports end-to-end latency of 70–500ms, against 3–329 seconds for frontier LLMs answering equivalent structured questions. Pricing follows the same logic: $0.042 per million input tokens, with output tokens free, since there's no long completion to bill for. Because the output space is fixed in advance, TypeSafe claims a structural guarantee against malformed responses — there is no such thing as a type error, because the model was never free to produce one.</p>
+        <div class="spec-block">
+          <div class="spec-row"><div class="spec-key">Founded</div><div class="spec-val">TypeSafe AI, 2024 — Almeida (ex-OpenAI RLHF/InstructGPT), Gafni, Sheng</div></div>
+          <div class="spec-row"><div class="spec-key">Launched</div><div class="spec-val">Sept 15, 2026 · $40M seed, led by DCVC</div></div>
+          <div class="spec-row"><div class="spec-key">Latency</div><div class="spec-val">70–500ms (vs 3–329s for comparable LLMs)</div></div>
+          <div class="spec-row"><div class="spec-key">Pricing</div><div class="spec-val">$0.042 / M input tokens · output tokens free</div></div>
+          <div class="spec-row"><div class="spec-key">Training</div><div class="spec-val">RLCD — reinforcement learning for calibrated decisions</div></div>
+        </div>
+        <p>The "so what" for practitioners: this is a bet that a meaningful share of what we currently ask LLMs to do — route a request, pick a tool, score a candidate, flag a policy violation — was never actually a language-generation problem. It was a classification problem wearing a chat interface. If that bet is right, Jev-style models become the decision layer underneath your existing LLM stack: cheap, fast, calibrated judgment calls that free the conversational model to focus on the parts of the job that actually require generating prose.</p>
+      </div>
+    </section>
+
+    <section class="topic" id="openjev">
+      <div class="topic-head">
+        <div class="topic-index">02</div>
+        <div class="topic-body-col">
+          <h2>OpenJev / SemIf — The Open Source Reply, in Under a Week</h2>
+        </div>
+      </div>
+      <div class="topic-body-col">
+        <p>The most telling part of this story isn't Jev — it's what happened next. Within roughly three days of TypeSafe's launch, independent researchers, including AlexWortega, had published open-weights reproductions of the core mechanism on Hugging Face. The insight they reverse-engineered: you don't need a proprietary model to read option probabilities off logits — you just need a model that's willing to sit still long enough for you to look. The project, first called <strong>OpenJev</strong> and later rebranded <strong class="tag">SemIf</strong> ("semantic ifs from open models"), turns openly available checkpoints — Qwen3, Qwen3.5, MiniCPM5 — into the same kind of typed decision engine, entirely client-side.</p>
+        <p>What makes SemIf worth a second look isn't just that it exists, but how it's shipped: as a browser page with no backend at all. Quantized GGUF weights load from Hugging Face via <strong>wllama</strong> and run on-device through <strong>WebGPU</strong>. Weights stay in your browser cache; your inputs never leave the page. It's a legitimate answer to one of the more uncomfortable questions raised by Jev's launch — do you want your routing and guardrail decisions round-tripping through a third party's hosted API at all?</p>
+        <div class="compare-scroll">
+          <table class="compare">
+            <tr><th>Model</th><th>Params</th><th>Accuracy</th><th>Where it runs</th></tr>
+            <tr><td>Jev (hosted)</td><td>undisclosed</td><td class="accent-cell">88.3%*</td><td>TypeSafe API only</td></tr>
+            <tr><td>Qwen3.5 4B (SemIf)</td><td>4B</td><td>~85%</td><td>Browser · WebGPU</td></tr>
+            <tr><td>MiniCPM5 2B (SemIf)</td><td>2B</td><td>63.7%</td><td>Browser · WebGPU (desktop default)</td></tr>
+            <tr><td>Qwen3 0.6B (SemIf)</td><td>0.6B</td><td>lower</td><td>Browser · WebGPU (phones)</td></tr>
+          </table>
+        </div>
+        <p style="font-size:12px; color:var(--ink-3); font-family:var(--f-mono);">*TypeSafe's own internal benchmark; not independently verified.</p>
+        <p>The gap between 88.3% and 63.7% is real, and it matters for anything safety-critical. But the gap between "proprietary API" and "runs entirely in your browser cache" closed in under a week. For a practitioner, that's the actual headline: novel inference-layer tricks in this cycle have a shelf life measured in days before the mechanism itself is public knowledge, whatever happens to the moat around scale and calibration.</p>
+      </div>
+    </section>
+
+    <section class="topic" id="jevops">
+      <div class="topic-head">
+        <div class="topic-index">03</div>
+        <div class="topic-body-col">
+          <h2>JevOps &amp; the Developer Reaction</h2>
+        </div>
+      </div>
+      <div class="topic-body-col">
+        <p>Every new primitive gets stress-tested by people building things it was never meant for, and Jev is no exception. Developers cataloguing their experiments on a site called "Jevable" have wired up games — Doom, chess — and assorted utilities using nothing but Jev's three query types: <strong>Choice</strong> (pick from options), <strong>Score</strong> (rate on a scale), and <strong>Noul</strong> (a 0–1 truthfulness probability). The community has already coined a name for the pattern of routing application logic entirely through these calls instead of ordinary code branches: <strong class="tag">JevOps</strong>.</p>
+        <div class="pull">"Constraints breed creativity" cuts both ways here — it's also a forcing function that makes developers pre-define every schema and category up front, closer to designing a database than prompting a chatbot.</div>
+        <p>Not everyone is convinced there's more here than a clever systems trick. AI researcher Mo Bitar has publicly questioned whether Jev demonstrates genuine reasoning capability at all, versus fast pattern-matching dressed up in new packaging. Engineer Archer Hume's independent analysis of roughly 10,000 API calls concluded that Jev computes its decision probabilities directly from internal model representations — consistent with TypeSafe's own description, but a useful independent data point given how little the company has disclosed about the underlying architecture.</p>
+        <p>For teams evaluating whether to adopt this pattern, the practical test isn't "can it play chess" — it's whether your existing tool-selection, routing, or moderation logic is currently implemented as an LLM call asking for JSON back. If it is, a Jev-shaped primitive (hosted or the open SemIf alternative) is worth benchmarking against it directly: same task, same eval set, compare latency, cost, and calibration before trusting it in a production guardrail.</p>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>The Bigger Picture</h2>
+      <p>Strip away the branding and Jev is a bet that "talk to me in natural language" and "make a fast, calibrated decision" are two different jobs that got bundled into one model class by default, mostly because LLMs were the tool everyone already had. Splitting them apart — a cheap, typed decision layer feeding into a slower, more expensive generative layer — is a plausible shape for production AI systems to take as the novelty of chat interfaces wears off and cost curves start to matter.</p>
+      <p>The faster story, though, is the one about OpenJev. A funded startup's core inference trick got reverse-engineered and reproduced in open weights within days of its public debut. That's not a one-off — it's the current tempo for inference-layer innovation. If your roadmap depends on a proprietary "how," budget for the possibility that the how becomes common knowledge before the seed round's ink is dry.</p>
+    </section>
+
+    <footer>
+      <p>Published October 2, 2026 · <a href="../index.html">Back to Archive</a> · <a href="https://weekly.mandar.me/">weekly.mandar.me</a> · <a href="https://github.com/manddar/weekly">GitHub</a></p>
+      <p>The Weekly is a newsletter covering AI, technology, and tooling for practitioners. New issues every Friday.</p>
+    </footer>
+  </div>
+</body>
+</html>
